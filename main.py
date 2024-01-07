@@ -21,8 +21,14 @@ class GetFibs(BaseHTTPRequestHandler):
 
         try:
             key = int(params["n"][0])
+
+            if key <= 0:
+                raise ValueError("n must be a positive integer")
+                
         except (IndexError, ValueError):
             self.send_response(422)
+            self.end_headers()
+            return
 
         nums = fibonacci(key)
 
@@ -41,4 +47,3 @@ if __name__ == "__main__":
 
     httpd = HTTPServer(("", 8000), GetFibs)
     httpd.serve_forever()
-
