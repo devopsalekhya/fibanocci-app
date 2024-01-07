@@ -1,0 +1,43 @@
+def buildNumber = env.BUILD_NUMBER as int
+if (buildNumber > 1) milestone(buildNumber - 1)
+milestone(buildNumber)
+pipeline {
+    agent {
+        node {
+            label 'master'
+            customWorkspace "${JENKINS_HOME}/workspace/${JOB_NAME}/${BRANCH_NAME}"
+        }
+    }
+    stages {
+        stage("Checkout code") {
+            steps {
+	    	checkout scm
+            }
+        }
+        stage ("Build Docker image") {
+            steps {
+              script {
+                  echo "Building Docker Image"
+                  docker build -t us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${BRANCH_NAME} -t us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${git_hash} .
+                  echo "Authenticating with Artifact Registry"
+                  gcloud auth print-access-token \
+                    --impersonate-service-account platform-interview@seventh-voltage-410418.iam.gserviceaccount.com | docker login \
+                    -u oauth2accesstoken \
+                    --password-stdin https://us-docker.pkg.dev
+                  echo "Pushing Image to Quay"
+                  docker push us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${BRANCH_NAME} || echo "Unable to push the image to AR"
+                  docker push us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${BRANCH_NAME} || echo "Unable to push the image with git-hash to AR"  
+                  """
+               }
+            }
+        }
+        stage('get_commit_msg') {
+            steps {
+              script {
+                env.GIT_COMMIT_MSG = sh (script: 'git log -1 --pretty=%B ${GIT_COMMIT}', returnStdout: true).trim()
+              }
+            }
+        }
+    }
+}
+
