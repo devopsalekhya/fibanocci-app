@@ -41,6 +41,7 @@ pipeline {
                 sh """
                 echo "Redeploying the workload - fibanocci"
                 chmod +x jenkins/redeploy.sh && jenkins/redeploy.sh
+                """
             }
           }
         }
