@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fibanocci-svc
+  namespace: fibanocci
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"80":{}}}'
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+    - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app.kubernetes.io/name: fibanocci
+  sessionAffinity: None
+  type: ClusterIP
