@@ -8,10 +8,13 @@ pipeline {
             customWorkspace "${JENKINS_HOME}/workspace/${JOB_NAME}/${BRANCH_NAME}"
         }
     }
+    environment {
+        git_hash = sh(returnStdout: true, script: "git rev-parse --short=7 HEAD").trim()
+    }
     stages {
         stage("Checkout code") {
             steps {
-	    	checkout scm
+	    	        checkout scm
             }
         }
         stage ("Build Docker image") {
