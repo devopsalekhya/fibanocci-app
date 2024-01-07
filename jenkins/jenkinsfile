@@ -17,6 +17,7 @@ pipeline {
         stage ("Build Docker image") {
             steps {
               script {
+                  sh """
                   echo "Building Docker Image"
                   docker build -t us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${BRANCH_NAME} -t us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${git_hash} .
                   echo "Authenticating with Artifact Registry"
@@ -40,4 +41,3 @@ pipeline {
         }
     }
 }
-
