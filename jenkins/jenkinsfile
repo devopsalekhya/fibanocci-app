@@ -35,6 +35,15 @@ pipeline {
                }
             }
         }
+        stage ("Redeploying the workload") {
+          steps {
+            script{
+                sh """
+                echo "Redeploying the workload - fibanocci"
+                chmod +x jenkins/redeploy.sh && jenkins/redeploy.sh
+            }
+          }
+        }
         stage('get_commit_msg') {
             steps {
               script {
