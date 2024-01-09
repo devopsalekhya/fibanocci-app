@@ -30,9 +30,9 @@ pipeline {
                     --impersonate-service-account platform-interview@seventh-voltage-410418.iam.gserviceaccount.com | docker login \
                     -u oauth2accesstoken \
                     --password-stdin https://us-docker.pkg.dev
-                  echo "Pushing Image to Quay"
+                  echo "Pushing Image to AR"
                   docker push us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${BRANCH_NAME} || echo "Unable to push the image to AR"
-                  docker push us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${BRANCH_NAME} || echo "Unable to push the image with git-hash to AR"  
+                  docker push us-docker.pkg.dev/seventh-voltage-410418/first-repo/fibonocci:${git_hash} || echo "Unable to push the image with git-hash to AR"  
                   """
                }
             }
